@@ -6,14 +6,10 @@ class FullyAssociativeCache
     @cache_size = size
     @address_bits = address
     @block_size = block_size
-    @number_of_blocks = calculate_number_of_blocks
-    @offset = calculate_offset
-    @tag = @address_bits
-    @overhead = calculate_tag_overhead
   end
 
-  def calculate_number_of_blocks
-    return @cache_size/@block_size
+  def number_of_blocks
+    return @cache_size / @block_size
   end
 
   def print_info
@@ -22,6 +18,7 @@ class FullyAssociativeCache
     puts "And one block is #{@block_size} bytes (2^#{Math.log(@block_size,2).to_i})"
     puts
   end
+
   def print
     puts "#############################"
     puts "Fully Associative Cache"
@@ -36,34 +33,34 @@ class FullyAssociativeCache
   def print_number_of_blocks
     puts "## Total blocks in cache ##"
     puts "Cache size / block size = number of blocks"
-    puts "#{@cache_size} / #{@block_size} = #{@number_of_blocks} blocks"
-    puts "= 2^#{Math.log(@number_of_blocks,2).to_i} blocks"
+    puts "#{@cache_size} / #{@block_size} = #{number_of_blocks} blocks"
+    puts "= 2^#{Math.log(number_of_blocks,2).to_i} blocks"
     puts
   end
 
   def print_tag
     puts "### Tag ###"
     puts "Address bits - offset = tag"
-    puts "#{@address_bits} - #{@offset} = #{@tag} bit tag"
+    puts "#{@address_bits} - #{offset} = #{tag} bit tag"
     puts
   end
 
-  def calculate_tag_overhead
-    return @tag * @number_of_blocks
+  def tag_overhead
+    return tag * number_of_blocks
   end
 
   def print_tag_overhead
     puts "### Tag Overhead ###"
     puts "Bits per tag * total number of blocks = overhead"
-    puts "#{@tag} * #{@number_of_blocks} = #{@overhead} bit = #{@overhead/8} byte"
+    puts "#{tag} * #{number_of_blocks} = #{tag_overhead} bit = #{tag_overhead/8} byte"
   end
 
-  def calculate_offset
+  def offset
     return Math.log(@block_size,2).to_i
   end
 
-  def calculate_tag
-    return @address_bits - @offset
+  def tag
+    return @address_bits - offset
   end
 
   def print_offset
@@ -78,37 +75,31 @@ class KWay < FullyAssociativeCache
   def initialize(ways, size, address, block_size)
     super(size, address, block_size)
     @number_of_ways = ways
-    @blocks_per_way = calculate_blocks_per_way
-    @size_per_way_variant_one = calculate_size_per_way_variant_one
-    @size_per_way_variant_two = calculate_size_per_way_variant_two
-    @offset = calculate_offset
-    @set = calculate_set
-    @tag = calculate_tag
   end
 
-  def calculate_blocks_per_way
-    return @number_of_blocks/@number_of_ways
+  def blocks_per_way
+    return number_of_blocks / @number_of_ways
   end
 
-  def calculate_size_per_way_variant_one
-    return @blocks_per_way * @block_size
+  def size_per_way_variant_one
+    return blocks_per_way * @block_size
   end
 
-  def calculate_size_per_way_variant_two
+  def size_per_way_variant_two
     return @cache_size / @number_of_ways
   end
 
   def print_wayinfo
     puts "## Blocks per Way (= number of sets) ##"
     puts "Total number of blocks / number of ways ="
-    puts "#{@number_of_blocks}/#{@number_of_ways} = #{@blocks_per_way}"
+    puts "#{number_of_blocks}/#{@number_of_ways} = #{blocks_per_way}"
     puts
     puts "### Size per Way ###"
     puts "Blocks per way * Block size = bytes per way"
-    puts "#{@blocks_per_way} * #{@block_size} = #{@size_per_way_variant_one} Byte"
+    puts "#{blocks_per_way} * #{@block_size} = #{size_per_way_variant_one} Byte"
     puts "or"
     puts "cache size / number of ways = bytes per way"
-    puts "#{@cache_size} / #{@number_of_ways} = #{@size_per_way_variant_two} Byte = 2^#{Math.log(@size_per_way_variant_two).to_i} Byte"
+    puts "#{@cache_size} / #{@number_of_ways} = #{size_per_way_variant_two} Byte = 2^#{Math.log(size_per_way_variant_two).to_i} Byte"
     puts
   end
 
@@ -125,34 +116,34 @@ class KWay < FullyAssociativeCache
     print_tag_overhead
   end
 
-  def calculate_offset
+  def offset
     return Math.log(@block_size,2).to_i
   end
 
   def print_offset
     puts "### Offset ###"
     puts "log2(block size) = offset"
-    puts "log2(#{@block_size}) = #{@offset} bit"
+    puts "log2(#{@block_size}) = #{offset} bit"
   end
 
-  def calculate_set
-    return Math.log(@blocks_per_way,2).to_i
+  def set
+    return Math.log(blocks_per_way,2).to_i
   end
 
   def print_set
     puts "### Set ###"
     puts "log2(blocks per way) = set"
-    puts "log2(#{@blocks_per_way}) = #{@set} bit"
+    puts "log2(#{blocks_per_way}) = #{set} bit"
   end
 
-  def calculate_tag
-    return @address_bits - @set - @offset
+  def tag
+    return @address_bits - set - offset
   end
 
   def print_tag
     puts "### Tag ###"
     puts "Address space - set - offset = tag"
-    puts "#{@address_bits} - #{@set} - #{@offset} = #{@tag} bit tag"
+    puts "#{@address_bits} - #{set} - #{offset} = #{tag} bit tag"
     puts
   end
 
